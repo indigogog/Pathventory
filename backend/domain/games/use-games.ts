@@ -1,7 +1,9 @@
-import { Game } from "@/types/game.type";
-import { SQLiteDatabase } from "expo-sqlite";
-import { useCallback, useEffect, useState } from "react";
+import {Game} from "@/types/game.type";
+import {SQLiteDatabase} from "expo-sqlite";
+import {useCallback, useEffect} from "react";
 import {GamesService} from "@/backend/domain/games/games.service";
+import {useStore} from "@/store";
+import {autorun} from "mobx";
 
 let globalService: GamesService | null = null;
 
@@ -12,47 +14,39 @@ const getGamesService = (db: SQLiteDatabase) => {
   return globalService;
 };
 
-export default function useGames (db: SQLiteDatabase) {
-  const [games, setGames] = useState<Game[]>([]);
-  const [refetch, setRefetch] = useState(true);
-
+export const useGames = (db: SQLiteDatabase) => {
   const service = getGamesService(db);
+  const {gamesStore} = useStore();
+
+  async function fetchGames() {
+    const gamesFromDb = await service.getAllGames();
+    autorun(() => gamesStore.setGames(gamesFromDb));
+  }
 
   const createGame = useCallback(async (game: Omit<Game, "gameId">) => {
     await service.createGame(game);
 
-    setRefetch(true);
+    fetchGames();
   }, [])
 
   const updateGame = useCallback(async (game: Game) => {
     await service.updateGame(game);
 
-    setRefetch(true);
+    fetchGames()
   }, [])
 
   const getGameById = useCallback(async (id: number) => {
     await service.getGameById(id);
 
-    setRefetch(true);
+    fetchGames()
   }, [])
 
-  useEffect(() => {
-    async function fetchGames() {
-      const gamesFromDb = await service.getAllGames();
-
-      setGames(gamesFromDb);
-      setRefetch(false);
-    }
-
-    if(refetch) {
-      fetchGames();
-    }
-  },[refetch])
-
   return {
-    games,
+    fetchGames,
     updateGame,
     getGameById,
-    createGame,
+    createGame
   }
 }
+
+export default useGames;

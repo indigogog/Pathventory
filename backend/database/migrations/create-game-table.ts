@@ -7,7 +7,8 @@ export default class CreateGameTable {
       CREATE TABLE IF NOT EXISTS "games" (
         game_id INTEGER PRIMARY KEY AUTOINCREMENT, 
         title TEXT NOT NULL,
-        character TEXT NOT NULL
+        character TEXT NOT NULL,
+        UNIQUE (title, character)
       );
     `;
 

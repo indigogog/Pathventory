@@ -8,6 +8,7 @@ export default class CreateGroupsTable {
         group_id INTEGER PRIMARY KEY AUTOINCREMENT, 
         game_id INTEGER NOT NULL,
         title TEXT NOT NULL,
+        UNIQUE (title, game_id),
         FOREIGN KEY (game_id)
           REFERENCES games(game_id)
           ON DELETE CASCADE
