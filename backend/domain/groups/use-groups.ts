@@ -12,7 +12,7 @@ const getGroupsService = (db: SQLiteDatabase) => {
   return globalService;
 };
 
-export default function useGroups (db: SQLiteDatabase, groupId: number) {
+export default function useGroups(db: SQLiteDatabase, gameId: number) {
   const [groups, setGroups] = useState<Group[]>([]);
   const [refetch, setRefetch] = useState(true);
 
@@ -32,16 +32,20 @@ export default function useGroups (db: SQLiteDatabase, groupId: number) {
 
   useEffect(() => {
     async function fetchGames() {
-      const groupsFromDb = await service.getAllGroups(groupId);
+      const groupsFromDb = await service.getAllGroups(gameId);
 
       setGroups(groupsFromDb);
       setRefetch(false);
     }
 
-    if(refetch) {
+    if (refetch) {
       fetchGames();
     }
-  },[refetch])
+  }, [refetch])
+
+  useEffect(() => {
+    setRefetch(true);
+  }, [gameId]);
 
   return {
     groups,

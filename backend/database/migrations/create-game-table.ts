@@ -4,7 +4,11 @@ export default class CreateGameTable {
   public async up(db: SQLiteDatabase) {
     const sql: string = `
       PRAGMA journal_mode = 'wal';
-      CREATE TABLE games (game_id INTEGER PRIMARY KEY NOT NULL, title TEXT NOT NULL, character TEXT NOT NULL);
+      CREATE TABLE IF NOT EXISTS "games" (
+        game_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        title TEXT NOT NULL,
+        character TEXT NOT NULL
+      );
     `;
 
     await db.execAsync(sql)
@@ -13,7 +17,7 @@ export default class CreateGameTable {
   public async down(db: SQLiteDatabase) {
     const sql: string = `
       PRAGMA journal_mode = 'wal';
-      DROP TABLE games;
+      DROP TABLE IF EXISTS "games";
     `;
 
     await db.execAsync(sql)
