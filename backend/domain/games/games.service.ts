@@ -1,5 +1,5 @@
-import {SQLiteDatabase} from "expo-sqlite";
-import {Game} from "@/app/shared/types/game.type";
+import { Game } from "@/types/game.type";
+import { SQLiteDatabase } from "expo-sqlite";
 
 export class GamesService {
   db: SQLiteDatabase;

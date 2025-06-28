@@ -1,5 +1,5 @@
 import {SQLiteDatabase} from "expo-sqlite";
-import {Group} from "@/app/shared/types/group.type";
+import {Group} from "@/types/group.type";
 
 export class GroupsService {
   db: SQLiteDatabase;

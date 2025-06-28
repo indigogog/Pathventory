@@ -1,7 +1,7 @@
 import {SQLiteDatabase} from "expo-sqlite";
 import {useCallback, useEffect, useState} from "react";
-import {GroupsService} from "@/app/backend/domain/groups/groups.service";
-import {Group} from "@/app/shared/types/group.type";
+import {GroupsService} from "@/backend/domain/groups/groups.service";
+import {Group} from "@/types/group.type";
 
 let globalService: GroupsService | null = null;
 

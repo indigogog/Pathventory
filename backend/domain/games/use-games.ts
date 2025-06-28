@@ -1,7 +1,7 @@
-import {SQLiteDatabase} from "expo-sqlite";
-import {useCallback, useEffect, useState} from "react";
-import {Game} from "@/app/shared/types/game.type";
-import {GamesService} from "@/app/backend/domain/games/games.service";
+import { GamesService } from "@/app/backend/domain/games/games.service";
+import { Game } from "@/types/game.type";
+import { SQLiteDatabase } from "expo-sqlite";
+import { useCallback, useEffect, useState } from "react";
 
 let globalService: GamesService | null = null;
 
