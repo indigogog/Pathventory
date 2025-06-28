@@ -5,17 +5,8 @@ import {HelloWave} from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import {ThemedText} from '@/components/ThemedText';
 import {ThemedView} from '@/components/ThemedView';
-import {useSQLiteContext} from "expo-sqlite";
-import useGames from "@/backend/domain/games/use-games";
-import useGroups from "@/backend/domain/groups/use-groups";
-import useItems from "@/backend/domain/items/use-items";
 
 export default function HomeScreen() {
-  const db = useSQLiteContext()
-  const {games, createGame, updateGame} = useGames(db);
-  const {groups, updateGroup, createGroup} = useGroups(db, 1);
-  const {items, createItem, updateItem, updateItemGroups, selectItem, selectedItem} = useItems(db, 1)
-
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -59,23 +50,6 @@ export default function HomeScreen() {
           <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
           <ThemedText type="defaultSemiBold">app-example</ThemedText>.
         </ThemedText>
-      </ThemedView>
-
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">GAMES</ThemedText>
-        {games.map(({gameId, title, character}) => (
-          <ThemedText type="defaultSemiBold" key={gameId}>{gameId}: {title} :: {character}</ThemedText>
-        ))}
-
-        <ThemedText type="subtitle">GROUPS</ThemedText>
-        {groups.map(({groupId, title, gameId}) => (
-          <ThemedText type="defaultSemiBold" key={groupId}>{groupId}: {title} :: {gameId}</ThemedText>
-        ))}
-
-        <ThemedText type="subtitle">ITEMS</ThemedText>
-        {items.map(({itemId, count, name}) => (
-          <ThemedText type="defaultSemiBold" key={itemId}>{itemId}: {name} :: {count}</ThemedText>
-        ))}
       </ThemedView>
     </ParallaxScrollView>
   );
