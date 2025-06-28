@@ -36,6 +36,8 @@ export default function useGames (db: SQLiteDatabase) {
     setRefetch(true);
   }, [])
 
+  const needRefetch = useCallback(()=>setRefetch(true), [])
+
   useEffect(() => {
     async function fetchGames() {
       const gamesFromDb = await service.getAllGames();
@@ -54,5 +56,6 @@ export default function useGames (db: SQLiteDatabase) {
     updateGame,
     getGameById,
     createGame,
+    needRefetch
   }
 }

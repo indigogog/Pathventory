@@ -9,6 +9,7 @@ export default class CreateItemsTable {
         game_id INTEGER NOT NULL,
         name TEXT NOT NULL,
         description TEXT,
+        UNIQUE (name, game_id),
         FOREIGN KEY (game_id)
           REFERENCES games(game_id)
           ON DELETE CASCADE
