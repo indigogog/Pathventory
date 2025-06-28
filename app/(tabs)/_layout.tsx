@@ -1,9 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs, useRouter } from "expo-router";
 import { Pressable } from "react-native";
+import {useStore} from "@/store";
 
 export default function TabsLayout() {
   const router = useRouter();
+  const {gamesStore} = useStore();
+
   return (
     <Tabs
       screenOptions={{
@@ -19,7 +22,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="inventory/index"
         options={{
-          title: "Инвентарь",
+          title: `Инвентарь ${gamesStore.selectedGame?.title ?? ""}`,
           tabBarIcon: ({ color }) => (
             <Ionicons name="list" size={24} color={color} />
           ),
@@ -28,7 +31,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="recipes/index"
         options={{
-          title: "Рецепты",
+          title: `Рецепты  ${gamesStore.selectedGame?.title ?? ""}`,
           tabBarIcon: ({ color }) => (
             <Ionicons name="book" size={24} color={color} />
           ),

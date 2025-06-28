@@ -1,7 +1,9 @@
 import {SQLiteDatabase} from "expo-sqlite";
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect} from "react";
 import {GroupsService} from "@/backend/domain/groups/groups.service";
 import {Group} from "@/types/group.type";
+import {useStore} from "@/store";
+import {autorun} from "mobx";
 
 let globalService: GroupsService | null = null;
 
@@ -12,44 +14,39 @@ const getGroupsService = (db: SQLiteDatabase) => {
   return globalService;
 };
 
-export default function useGroups(db: SQLiteDatabase, gameId: number) {
-  const [groups, setGroups] = useState<Group[]>([]);
-  const [refetch, setRefetch] = useState(true);
+export default function useGroups(db: SQLiteDatabase) {
+  const {groupStore, gamesStore: {selectedGame}} = useStore();
 
   const service = getGroupsService(db);
+
+  async function fetchGroups() {
+    if (!selectedGame) {
+      return;
+    }
+
+    const groupsFromDb = await service.getAllGroups(selectedGame.gameId);
+
+    autorun(() => groupStore.setGroups(groupsFromDb));
+  }
 
   const createGroup = useCallback(async (group: Omit<Group, "groupId">) => {
     await service.createGroup(group);
 
-    setRefetch(true);
+    fetchGroups();
   }, [])
 
   const updateGroup = useCallback(async (group: Group) => {
     await service.updateGroup(group);
 
-    setRefetch(true);
+    fetchGroups();
   }, [])
-
   useEffect(() => {
-    async function fetchGames() {
-      const groupsFromDb = await service.getAllGroups(gameId);
-
-      setGroups(groupsFromDb);
-      setRefetch(false);
-    }
-
-    if (refetch) {
-      fetchGames();
-    }
-  }, [refetch])
-
-  useEffect(() => {
-    setRefetch(true);
-  }, [gameId]);
+    fetchGroups()
+  }, [selectedGame])
 
   return {
-    groups,
     updateGroup,
     createGroup,
+    fetchGroups
   }
 }

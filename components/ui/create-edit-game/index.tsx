@@ -1,14 +1,17 @@
 import {StyleSheet, Text, TextInput, TouchableHighlight, View} from "react-native";
 import {Game} from "@/types/game.type";
 import {useCallback, useEffect, useState} from "react";
-import {useLocalSearchParams, useNavigation} from "expo-router";
+import {useNavigation} from "expo-router";
 import {useSQLiteContext} from "expo-sqlite";
 import useGames from "@/backend/domain/games/use-games";
+import {useStore} from "@/store";
 
-export default function CreateEditGame() {
-  const {gameId} = useLocalSearchParams<{ gameId?: string }>();
+
+export const CreateEditGame = () => {
   const db = useSQLiteContext();
-  const {games, createGame, updateGame} = useGames(db);
+  const {gamesStore} = useStore();
+  const {createGame, updateGame} = useGames(db);
+
   const navigation = useNavigation();
 
   const [changed, setChanged] = useState<Game>({gameId: 0, title: "", character: ""})
@@ -22,7 +25,7 @@ export default function CreateEditGame() {
   }, [setChanged])
 
   const onSave = async () => {
-    if (gameId) {
+    if (gamesStore.selectedGame) {
       await updateGame(changed);
     } else {
       await createGame(changed);
@@ -32,11 +35,10 @@ export default function CreateEditGame() {
   }
 
   useEffect(() => {
-    const game = games.find((g) => g.gameId === Number(gameId));
-    if (game) {
-      setChanged(game)
+    if (gamesStore.selectedGame) {
+      setChanged(gamesStore.selectedGame)
     }
-  }, [gameId, games])
+  }, [gamesStore.selectedGame])
 
   return (
     <View style={{flex: 1, padding: 20, justifyContent: "space-between"}}>
@@ -69,6 +71,8 @@ export default function CreateEditGame() {
     </View>
   );
 }
+
+export default CreateEditGame;
 
 const styles = StyleSheet.create({
   input: {

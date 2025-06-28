@@ -1,11 +1,13 @@
-import { useLocalSearchParams } from "expo-router";
-import { Text, View } from "react-native";
+import {useLocalSearchParams} from "expo-router";
+import {Text, View} from "react-native";
+import GroupsFilter from "@/components/ui/groups-filter/groups-filter";
 
 export default function GameInventory() {
-  const { id } = useLocalSearchParams();
+  const {id} = useLocalSearchParams();
   return (
-    <View style={{ flex: 1, padding: 20 }}>
-      <Text style={{ color: "white" }}>Инвентарь объекта ID: {id}</Text>
+    <View style={{flex: 1, padding: 10}}>
+      <GroupsFilter/>
+      <Text style={{color: "white"}}>Инвентарь объекта ID: {id}</Text>
     </View>
   );
 }
