@@ -1,10 +1,14 @@
 import {SQLiteDatabase} from "expo-sqlite";
 import CreateGameTable from "./migrations/create-game-table";
+import CreateGroupsTable from "@/app/backend/database/migrations/create-groups-table";
 
 type Migration = { id: number, title: string, date_exec: number };
 
 export default async function migrateDbIfNeeded(db: SQLiteDatabase) {
   const DATABASE_VERSION = 1;
+
+  await db.execAsync(`PRAGMA foreign_keys = ON;`)
+
   let version = await db.getFirstAsync<{ user_version: number }>(
     'PRAGMA user_version'
   );
@@ -22,16 +26,20 @@ export default async function migrateDbIfNeeded(db: SQLiteDatabase) {
       `);
   }
 
-  // const test = await db.getAllAsync(`SELECT * FROM sqlite_master;`)
-  // console.log(test)
+  const tables = await db.getAllAsync<any>(`SELECT * FROM sqlite_master;`)
+  console.log(`all tables: `);
+  tables.forEach(table => console.log(table.name))
 
-  const migrations = {"create-game-table": new CreateGameTable()};
-
-  // await migrations["create-game-table"].down(db);
-  // await db.execAsync(`DELETE FROM migrations WHERE id = 1`);
+  const migrations = {
+    "create-game-table": new CreateGameTable(),
+    "create-groups-table": new CreateGroupsTable()
+  };
 
   async function runMigration() {
     const ranMigrations = await db.getAllAsync<Migration>(`SELECT * FROM migrations`);
+
+    console.log(`all migrations: `);
+    ranMigrations.forEach((migration) => console.log(migration.title))
 
     for (const [key, value] of Object.entries<any>(migrations)) {
       if (ranMigrations.find((r) => r.title === key)) {
@@ -39,8 +47,10 @@ export default async function migrateDbIfNeeded(db: SQLiteDatabase) {
       }
 
       await value.up(db);
-      await db.execAsync(`INSERT INTO migrations(title, date_exec)
-                          VALUES ('${key}', ${new Date().getTime()})`)
+      await db.execAsync(`
+        INSERT INTO migrations(title, date_exec)
+        VALUES ('${key}', ${new Date().getTime()})
+        `)
     }
   }
 

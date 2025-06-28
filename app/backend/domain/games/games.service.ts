@@ -6,6 +6,7 @@ export class GamesService {
 
   constructor(db: SQLiteDatabase) {
     this.db = db;
+    console.log('GamesService initialized.');
   }
 
   public async getAllGames(): Promise<Game[]> {
