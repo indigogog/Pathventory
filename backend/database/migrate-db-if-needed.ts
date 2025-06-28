@@ -1,6 +1,6 @@
 import {SQLiteDatabase} from "expo-sqlite";
 import CreateGameTable from "./migrations/create-game-table";
-import CreateGroupsTable from "@/app/backend/database/migrations/create-groups-table";
+import CreateGroupsTable from "./migrations/create-groups-table";
 
 type Migration = { id: number, title: string, date_exec: number };
 
