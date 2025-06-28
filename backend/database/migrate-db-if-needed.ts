@@ -1,4 +1,4 @@
-import {SQLiteDatabase} from "expo-sqlite";
+import { SQLiteDatabase } from "expo-sqlite";
 import CreateGameTable from "./migrations/create-game-table";
 
 type Migration = { id: number, title: string, date_exec: number };
@@ -22,8 +22,8 @@ export default async function migrateDbIfNeeded(db: SQLiteDatabase) {
       `);
   }
 
-  // const test = await db.getAllAsync(`SELECT * FROM sqlite_master;`)
-  // console.log(test)
+  const test = await db.getAllAsync(`SELECT * FROM sqlite_master;`)
+  console.log(test)
 
   const migrations = {"create-game-table": new CreateGameTable()};
 
