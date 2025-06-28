@@ -3,11 +3,20 @@ import { Game } from "@/types/game.type";
 import { SQLiteDatabase } from "expo-sqlite";
 import { useCallback, useEffect, useState } from "react";
 
+let globalService: GamesService | null = null;
+
+const getGamesService = (db: SQLiteDatabase) => {
+  if (!globalService) {
+    globalService = new GamesService(db);
+  }
+  return globalService;
+};
+
 export default function useGames (db: SQLiteDatabase) {
   const [games, setGames] = useState<Game[]>([]);
   const [refetch, setRefetch] = useState(true);
 
-  const service = new GamesService(db);
+  const service = getGamesService(db);
 
   const createGame = useCallback(async (game: Omit<Game, "gameId">) => {
     await service.createGame(game);
