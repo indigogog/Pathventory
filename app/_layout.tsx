@@ -1,17 +1,18 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { useFonts } from "expo-font";
+import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import "react-native-reanimated";
 
-import migrateDbIfNeeded from '@/backend/database/migrate-db-if-needed';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { SQLiteProvider } from 'expo-sqlite';
+import migrateDbIfNeeded from "@/backend/database/migrate-db-if-needed";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { PathventoryTheme } from "@/theme";
+import { ThemeProvider } from "@react-navigation/native";
+import { SQLiteProvider } from "expo-sqlite";
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
   if (!loaded) {
@@ -21,13 +22,27 @@ export default function RootLayout() {
 
   return (
     <SQLiteProvider databaseName="pathventory.db" onInit={migrateDbIfNeeded}>
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+      <ThemeProvider value={PathventoryTheme}>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            headerTitle: "Игры",
+          }}
+        >
+          <Stack.Screen
+            name="games/index"
+            options={{ title: "Игры", headerShown: true }}
+          />
+          <Stack.Screen
+            name="(tabs)"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <StatusBar style="auto" />
+      </ThemeProvider>
     </SQLiteProvider>
   );
 }
