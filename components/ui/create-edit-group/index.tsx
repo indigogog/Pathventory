@@ -1,43 +1,43 @@
 import {StyleSheet, Text, TextInput, TouchableHighlight, View} from "react-native";
-import {Game} from "@/types/game.type";
 import {useCallback, useEffect, useState} from "react";
 import {useNavigation} from "expo-router";
 import {useSQLiteContext} from "expo-sqlite";
-import useGames from "@/backend/domain/games/use-games";
 import {useStore} from "@/store";
+import useGroups from "@/backend/domain/groups/use-groups";
+import {Group} from "@/types/group.type";
 
-export const CreateEditGame = () => {
+export const CreateEditGroup = () => {
   const db = useSQLiteContext();
-  const {gamesStore} = useStore();
-  const {createGame, updateGame} = useGames(db);
+  const {gamesStore, groupStore} = useStore();
+  const {createGroup, updateGroup} = useGroups(db);
 
   const navigation = useNavigation();
 
-  const [changed, setChanged] = useState<Game>({gameId: 0, title: "", character: ""})
+  const [changed, setChanged] = useState<Group>({gameId: 0, title: "", groupId: 0})
 
   const onChangeTitle = useCallback((title: string) => {
     setChanged((prev) => ({...prev, title}));
   }, [setChanged])
 
-  const onChangeCharacter = useCallback((character: string) => {
-    setChanged((prev) => ({...prev, character}));
-  }, [setChanged])
-
   const onSave = async () => {
-    if (gamesStore.selectedGame) {
-      await updateGame(changed);
+    if (groupStore.selectedGroup) {
+      await updateGroup(changed);
     } else {
-      await createGame(changed);
+      await createGroup(changed);
     }
 
     navigation.goBack();
   }
 
   useEffect(() => {
-    if (gamesStore.selectedGame) {
-      setChanged(gamesStore.selectedGame)
+    if (groupStore.selectedGroup ) {
+      setChanged(groupStore.selectedGroup)
     }
-  }, [gamesStore.selectedGame])
+
+    if(gamesStore.selectedGame) {
+      setChanged((prev)=>({...prev, gameId: gamesStore.selectedGame!.gameId}))
+    }
+  }, [groupStore.selectedGroup, gamesStore.selectedGame])
 
   return (
     <View style={{flex: 1, padding: 20, justifyContent: "space-between"}}>
@@ -51,14 +51,6 @@ export const CreateEditGame = () => {
           />
         </View>
 
-        <View style={{marginTop: 20, marginBottom: 20}}>
-          <Text style={{color: "white"}}>Персонаж</Text>
-          <TextInput
-            onChangeText={onChangeCharacter}
-            value={changed.character}
-            style={styles.input}
-          />
-        </View>
       </View>
       <TouchableHighlight onPress={onSave}>
         <View style={styles.saveBtn}>
@@ -71,7 +63,7 @@ export const CreateEditGame = () => {
   );
 }
 
-export default CreateEditGame;
+export default CreateEditGroup;
 
 const styles = StyleSheet.create({
   input: {

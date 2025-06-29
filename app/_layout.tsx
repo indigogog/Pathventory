@@ -55,6 +55,15 @@ export default function RootLayout() {
             />
 
             <Stack.Screen
+              name="groups/create-group/index"
+              options={{headerShown: true, headerTitle: "Создать раздел"}}
+            />
+            <Stack.Screen
+              name="groups/update-group/index"
+              options={{headerShown: true, headerTitle: "Редактировать раздел"}}
+            />
+
+            <Stack.Screen
               name="(tabs)"
               options={{
                 headerShown: false,

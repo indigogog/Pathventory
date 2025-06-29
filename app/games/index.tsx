@@ -21,6 +21,7 @@ const GamesList = observer(() => {
 
   return (
     <FlatList
+      keyExtractor={(item) => item.gameId?.toString()}
       data={[...gamesStore.games, {gameId: 0, title: '', character: ""}]}
       renderItem={({item}) => (
         <>
