@@ -1,77 +1,54 @@
 import React from 'react';
 import {observer} from "mobx-react-lite";
-import {Pressable, ScrollView, StyleSheet, Text, View} from "react-native";
+import {StyleSheet, View} from "react-native";
 import {useStore} from "@/store";
 import {useSQLiteContext} from "expo-sqlite";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import {router} from "expo-router";
 import useStorages from "@/backend/domain/storages/use-storages";
+import HorizontalFilter from "@/components/ui/utils/horizontal-filter/horizontal-filter";
+import {Storage} from "@/types/storage.type";
+import {router} from "expo-router";
 
 const StorageFilter = observer(() => {
   const db = useSQLiteContext();
-  const {storageStore, gamesStore} = useStore();
+  const {storageStore} = useStore();
   useStorages(db);
 
   const {selectedStorage} = storageStore
 
-  const listData = [{
-    gameId: gamesStore.selectedGame?.gameId ?? 0,
-    title: 'Все',
-    storageId: null
-  }, ...storageStore.storages, {gameId: 0, title: '', storageId: 0}]
+  const getKey = (item: Storage) => item.storageId
+
+  const onSelect = (item: Storage) => {
+    storageStore.setSelectedStorage(item)
+  }
+  const onUpdate = (item: Storage) => {
+    if (item.storageId) {
+      storageStore.setSelectedStorage(item as Storage)
+      router.push({
+        pathname: "/storages/update",
+      })
+    }
+  }
+  const onCreate = () => {
+    storageStore.setSelectedStorage(null)
+    router.push({
+      pathname: "/storages/create",
+    })
+  }
+  const onSelectAll = () => {
+    storageStore.setSelectedStorage(null)
+  }
 
   return (
     <View style={styles.container}>
-      <ScrollView horizontal>
-        {listData.map((item) => (
-          <View key={item.storageId}>
-            {item.storageId === 0 ? (
-                <Pressable
-                  onPress={() => {
-                    storageStore.setSelectedStorage(null)
-                    router.push({
-                      pathname: "/storages/create-storage",
-                    })
-                  }}
-                >
-                  <View
-                    style={
-                      {...styles.storageContainer, ...styles.addContainer}
-                    }>
-                    <MaterialIcons style={styles.addIcon} name={"add"} color={"white"}/>
-                  </View>
-                </Pressable>
-              )
-              :
-              (
-                <Pressable
-                  onPress={() => {
-                    storageStore.setSelectedStorage(item.storageId ? item : null)
-                  }}
-                  onLongPress={() => {
-                    if (item.storageId) {
-                      storageStore.setSelectedStorage(item)
-                      router.push({
-                        pathname: "/storages/update-storage",
-                      })
-                    }
-                  }}
-                >
-                  <View
-                    style={
-                      selectedStorage?.storageId === item.storageId || selectedStorage === item.storageId
-                        ? {...styles.storageContainer, ...styles.selectedStorage}
-                        : styles.storageContainer
-                    }>
-                    <Text style={styles.storageTitle}>{item.title}</Text>
-                  </View>
-                </Pressable>
-              )}
-          </View>
-        ))}
-
-
-      </ScrollView>
+      <HorizontalFilter<Storage>
+        onSelectAll={onSelectAll}
+        onSelect={onSelect}
+        onUpdate={onUpdate}
+        onCreate={onCreate}
+        getKey={getKey}
+        selected={selectedStorage ? [selectedStorage] : []}
+        list={storageStore.storages}
+      />
     </View>
   );
 });
@@ -81,34 +58,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: 40
   },
-  storageContainer: {
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderColor: "white",
-    borderRadius: 5,
-    padding: 3,
-    marginRight: 8
-  },
-  addContainer: {
-    height: 35,
-    width: 40,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  addIcon: {
-    fontSize: 28,
-    padding: 0
-  },
-  selectedStorage: {
-    borderColor: "#5c8bff",
-  },
-  storageTitle: {
-    fontSize: 20,
-    color: "white",
-  },
-  list: {
-    flexDirection: 'row'
-  }
 })
 
 export default StorageFilter;

@@ -3,42 +3,46 @@ import {useCallback, useEffect, useState} from "react";
 import {useNavigation} from "expo-router";
 import {useSQLiteContext} from "expo-sqlite";
 import {useStore} from "@/store";
-import {Storage} from "@/types/storage.type";
-import useStorages from "@/backend/domain/storages/use-storages";
+import useTags from "@/backend/domain/tags/use-tags";
+import {Tag} from "@/types/tag.type";
 import {observer} from "mobx-react-lite";
 
-export const CreateEditStorage = observer(() => {
+export const CreateEditTag = observer(() => {
   const db = useSQLiteContext();
-  const {gamesStore, storageStore} = useStore();
-  const {createStorage, updateStorage} = useStorages(db);
+  const {gamesStore, tagsStore} = useStore();
+  const {createTag, updateTag} = useTags(db);
 
   const navigation = useNavigation();
 
-  const [changed, setChanged] = useState<Storage>({gameId: 0, title: "", storageId: 0})
+  const [changed, setChanged] = useState<Tag>({gameId: 0, title: "", tagId: 0, entity: "item"})
 
   const onChangeTitle = useCallback((title: string) => {
     setChanged((prev) => ({...prev, title}));
   }, [setChanged])
 
   const onSave = async () => {
-    if (storageStore.selectedStorage) {
-      await updateStorage(changed);
+    if (!tagsStore.tagForUpdateOrCreate) {
+      return;
+    }
+
+    if (tagsStore.tagForUpdateOrCreate.tagId > 0) {
+      await updateTag(changed)
     } else {
-      await createStorage(changed);
+      await createTag(changed);
     }
 
     navigation.goBack();
   }
 
   useEffect(() => {
-    if (storageStore.selectedStorage) {
-      setChanged(storageStore.selectedStorage)
+    if (tagsStore.tagForUpdateOrCreate) {
+      setChanged(tagsStore.tagForUpdateOrCreate)
     }
 
     if (gamesStore.selectedGame) {
       setChanged((prev) => ({...prev, gameId: gamesStore.selectedGame!.gameId}))
     }
-  }, [storageStore.selectedStorage, gamesStore.selectedGame])
+  }, [tagsStore.tagForUpdateOrCreate, gamesStore.selectedGame])
 
   return (
     <View style={{flex: 1, padding: 20, justifyContent: "space-between"}}>
@@ -64,7 +68,7 @@ export const CreateEditStorage = observer(() => {
   );
 })
 
-export default CreateEditStorage;
+export default CreateEditTag;
 
 const styles = StyleSheet.create({
   input: {

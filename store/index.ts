@@ -3,15 +3,18 @@ import { AsyncTrunk } from 'mobx-sync';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import GamesStore from "@/store/game/game.store";
 import StorageStore from "@/store/storage/storage.store";
+import TagsStore from "@/store/tags/storage.store";
 
 
 export class RootStore {
   gamesStore: GamesStore;
   storageStore: StorageStore;
+  tagsStore: TagsStore;
 
   constructor() {
     this.gamesStore = new GamesStore();
     this.storageStore = new StorageStore();
+    this.tagsStore = new TagsStore();
   }
 }
 

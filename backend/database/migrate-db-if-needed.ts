@@ -3,6 +3,7 @@ import CreateGameTable from "./migrations/create-game-table";
 import CreateStorageTable from "./migrations/create-storage-table";
 import CreateItemsTable from "@/backend/database/migrations/create-items-table";
 import CreateRecipesTable from "@/backend/database/migrations/create-recipes-table";
+import {CreateTagsTable} from "@/backend/database/migrations/create-tags-table";
 
 type Migration = { id: number, title: string, date_exec: number };
 
@@ -40,7 +41,8 @@ export default async function migrateDbIfNeeded(db: SQLiteDatabase) {
     "create-game-table": new CreateGameTable(),
     "create-storages-table": new CreateStorageTable(),
     "create-items-table": new CreateItemsTable(),
-    // "create-recipes-table": new CreateRecipesTable(),
+    "create-tags-table": new CreateTagsTable(),
+    "create-recipes-table": new CreateRecipesTable(),
   };
 
   async function runMigration() {
@@ -94,12 +96,13 @@ export default async function migrateDbIfNeeded(db: SQLiteDatabase) {
     })
   }
 
-
   async function init() {
     await db.execAsync(`INSERT INTO games(title, character) VALUES('test', 'test');`)
     await db.execAsync(`INSERT INTO storages(game_id, title) VALUES(1, 'test');`)
     await db.execAsync(`INSERT INTO storages(game_id, title) VALUES(1, 'test2');`)
     await db.execAsync(`INSERT INTO items(game_id, name, description) VALUES(1, 'test', 'test');`)
+    await db.execAsync(`INSERT INTO item_tags(game_id, title) VALUES(1, 'test');`)
+    await db.execAsync(`INSERT INTO items_j_tags(item_id, tag_id) VALUES(1, 1);`)
     await db.execAsync(`INSERT INTO items_j_storages(item_id, storage_id, items_count) VALUES(1, 1, 1);`)
     await db.execAsync(`INSERT INTO items_j_storages(item_id, storage_id, items_count) VALUES(1, 2, 1);`)
   }

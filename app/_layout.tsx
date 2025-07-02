@@ -55,12 +55,21 @@ export default function RootLayout() {
             />
 
             <Stack.Screen
-              name="storages/create-storage/index"
+              name="storages/create/index"
               options={{headerShown: true, headerTitle: "Создать раздел"}}
             />
             <Stack.Screen
-              name="storages/update-storage/index"
+              name="storages/update/index"
               options={{headerShown: true, headerTitle: "Редактировать раздел"}}
+            />
+
+            <Stack.Screen
+              name="tags/create/index"
+              options={{headerShown: true, headerTitle: "Создать тэг"}}
+            />
+            <Stack.Screen
+              name="tags/update/index"
+              options={{headerShown: true, headerTitle: "Редактировать тэг"}}
             />
 
             <Stack.Screen

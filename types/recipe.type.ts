@@ -1,9 +1,9 @@
-import {Storage} from "@/types/storage.type";
+import {Tag} from "@/types/tag.type";
 
 export type RecipeListElement = Pick<Recipe, "recipeId" | "name"> & { available: boolean }
 export type Recipe = {
   gameId: number;
-  groups: Storage[];
+  tags: Tag[];
   recipeId: number;
   name: string;
   description: string;

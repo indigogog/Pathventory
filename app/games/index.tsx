@@ -1,6 +1,6 @@
 import {useRouter} from "expo-router";
 import {FlatList, Pressable, StyleSheet, Text, View} from "react-native";
-import EditButton from "@/components/ui/edit-button/EditButton";
+import EditButton from "@/components/ui/utils/edit-button/EditButton";
 import {useStore} from "@/store";
 import {useSQLiteContext} from "expo-sqlite";
 import {observer} from "mobx-react-lite";
