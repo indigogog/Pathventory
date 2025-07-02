@@ -1,7 +1,8 @@
 import {deleteDatabaseAsync, SQLiteDatabase} from "expo-sqlite";
 import CreateGameTable from "./migrations/create-game-table";
-import CreateGroupsTable from "./migrations/create-groups-table";
+import CreateStorageTable from "./migrations/create-storage-table";
 import CreateItemsTable from "@/backend/database/migrations/create-items-table";
+import CreateRecipesTable from "@/backend/database/migrations/create-recipes-table";
 
 type Migration = { id: number, title: string, date_exec: number };
 
@@ -25,7 +26,7 @@ export default async function migrateDbIfNeeded(db: SQLiteDatabase) {
         PRAGMA journal_mode = 'wal';
         CREATE TABLE migrations (
           id INTEGER PRIMARY KEY NOT NULL,
-          title TEXT NOT NULL, 
+          title TEXT NOT NULL,
           date_exec INTEGER
         );
       `);
@@ -37,8 +38,9 @@ export default async function migrateDbIfNeeded(db: SQLiteDatabase) {
 
   const migrations = {
     "create-game-table": new CreateGameTable(),
-    "create-groups-table": new CreateGroupsTable(),
+    "create-storages-table": new CreateStorageTable(),
     "create-items-table": new CreateItemsTable(),
+    // "create-recipes-table": new CreateRecipesTable(),
   };
 
   async function runMigration() {
@@ -75,7 +77,7 @@ export default async function migrateDbIfNeeded(db: SQLiteDatabase) {
 
     await db.withTransactionAsync(async () => {
       try {
-        for (const [key, value] of Object.entries<any>(migrations)) {
+        for (const [key, value] of Object.entries<any>(migrations).reverse()) {
           if (!ranMigrations.find((r) => r.title === key)) {
             continue;
           }
@@ -95,11 +97,11 @@ export default async function migrateDbIfNeeded(db: SQLiteDatabase) {
 
   async function init() {
     await db.execAsync(`INSERT INTO games(title, character) VALUES('test', 'test');`)
-    await db.execAsync(`INSERT INTO groups(game_id, title) VALUES(1, 'test');`)
-    await db.execAsync(`INSERT INTO groups(game_id, title) VALUES(1, 'test2');`)
+    await db.execAsync(`INSERT INTO storages(game_id, title) VALUES(1, 'test');`)
+    await db.execAsync(`INSERT INTO storages(game_id, title) VALUES(1, 'test2');`)
     await db.execAsync(`INSERT INTO items(game_id, name, description) VALUES(1, 'test', 'test');`)
-    await db.execAsync(`INSERT INTO items_j_groups(item_id, group_id, items_count) VALUES(1, 1, 1);`)
-    await db.execAsync(`INSERT INTO items_j_groups(item_id, group_id, items_count) VALUES(1, 2, 1);`)
+    await db.execAsync(`INSERT INTO items_j_storages(item_id, storage_id, items_count) VALUES(1, 1, 1);`)
+    await db.execAsync(`INSERT INTO items_j_storages(item_id, storage_id, items_count) VALUES(1, 2, 1);`)
   }
   await runMigration();
   // await init();

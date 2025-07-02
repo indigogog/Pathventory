@@ -18,14 +18,14 @@ export default class CreateItemsTable {
 
     await db.execAsync(`
       PRAGMA journal_mode = 'wal';
-      CREATE TABLE IF NOT EXISTS "items_j_groups" (
+      CREATE TABLE IF NOT EXISTS "items_j_storages" (
         item_id INTEGER NOT NULL,
-        group_id INTEGER NOT NULL,
+        storage_id INTEGER NOT NULL,
         items_count INTEGER NOT NULL,
-        PRIMARY KEY (group_id, item_id),
-        UNIQUE (group_id, item_id),
-        FOREIGN KEY (group_id)
-          REFERENCES groups(group_id)
+        PRIMARY KEY (storage_id, item_id),
+        UNIQUE (storage_id, item_id),
+        FOREIGN KEY (storage_id)
+          REFERENCES storages(storage_id)
           ON DELETE CASCADE,
         FOREIGN KEY (item_id)
           REFERENCES items(item_id)
@@ -37,7 +37,7 @@ export default class CreateItemsTable {
   async down(db: SQLiteDatabase): Promise<void> {
     await db.execAsync(`
       PRAGMA journal_mode = 'wal';
-      DROP TABLE IF EXISTS "items_j_groups"; 
+      DROP TABLE IF EXISTS "items_j_storages"; 
       DROP TABLE IF EXISTS "items"; 
     `)
   }

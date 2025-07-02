@@ -5,24 +5,24 @@ import {Item, ItemListElement} from "@/types/item.type";
 
 let globalService: ItemsService | null = null;
 
-const getGroupsService = (db: SQLiteDatabase) => {
+const getItemsService = (db: SQLiteDatabase) => {
   if (!globalService) {
     globalService = new ItemsService(db);
   }
   return globalService;
 };
 
-export default function useItems(db: SQLiteDatabase, gameId: number, groupId?: number,) {
+export default function useItems(db: SQLiteDatabase, gameId: number, storageId?: number,) {
   const [items, setItems] = useState<ItemListElement[]>([]);
   const [selectedItem, setSelectedItem] = useState<Item | undefined>();
   const [refetch, setRefetch] = useState(true);
 
-  const service = getGroupsService(db);
+  const service = getItemsService(db);
 
   const selectItem = useCallback(async (itemId: number) => {
     const itemFromDb = await service.getItemById(itemId, gameId);
     setSelectedItem(itemFromDb);
-  }, [groupId, gameId]);
+  }, [storageId, gameId]);
 
   const createItem = useCallback(async (item: Omit<Item, "itemId">) => {
     await service.createItem(item);
@@ -36,17 +36,11 @@ export default function useItems(db: SQLiteDatabase, gameId: number, groupId?: n
     setRefetch(true);
   }, [])
 
-  const updateItemGroups = useCallback(async (item: Item) => {
-    await service.updateItemGroups(item);
-
-    setRefetch(true);
-  }, [])
-
   useEffect(() => {
     async function fetchItems() {
-      const groupsFromDb = await service.getAllItems(gameId, groupId);
+      const itemsFromDb = await service.getAllItems(gameId, storageId);
 
-      setItems(groupsFromDb);
+      setItems(itemsFromDb);
       setRefetch(false);
     }
 
@@ -57,17 +51,16 @@ export default function useItems(db: SQLiteDatabase, gameId: number, groupId?: n
         selectItem(selectedItem.itemId)
       }
     }
-  }, [refetch, groupId, selectedItem])
+  }, [refetch, storageId, selectedItem])
 
   useEffect(() => {
     setRefetch(true);
-  }, [gameId, groupId]);
+  }, [gameId, storageId]);
 
   return {
     items,
     createItem,
     updateItem,
-    updateItemGroups,
     selectItem,
     selectedItem
   }

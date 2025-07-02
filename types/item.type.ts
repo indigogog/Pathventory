@@ -1,9 +1,9 @@
-import {Group} from "@/types/group.type";
+import {Storage} from "@/types/storage.type";
 
-export type ItemGroupWithCount = Group & {count: number}
+export type ItemStorageWithCount = Storage & {count: number}
 export type Item = {
   gameId: number;
-  groups: ItemGroupWithCount[];
+  storages: ItemStorageWithCount[];
   itemId: number;
   name: string;
   description: string;

@@ -1,11 +1,11 @@
 import {SQLiteDatabase} from "expo-sqlite";
 
-export default class CreateGroupsTable {
+export default class CreateStorageTable {
   async up(db: SQLiteDatabase): Promise<void> {
     await db.execAsync(`
       PRAGMA journal_mode = 'wal';
-      CREATE TABLE IF NOT EXISTS "groups" (
-        group_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+      CREATE TABLE IF NOT EXISTS "storages" (
+        storage_id INTEGER PRIMARY KEY AUTOINCREMENT, 
         game_id INTEGER NOT NULL,
         title TEXT NOT NULL,
         UNIQUE (title, game_id),
@@ -19,7 +19,7 @@ export default class CreateGroupsTable {
   async down(db: SQLiteDatabase): Promise<void> {
     await db.execAsync(`
       PRAGMA journal_mode = 'wal';
-      DROP TABLE IF EXISTS "groups"; 
+      DROP TABLE IF EXISTS "storages"; 
     `)
   }
 }

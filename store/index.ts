@@ -2,16 +2,16 @@ import { createContext, useContext } from "react";
 import { AsyncTrunk } from 'mobx-sync';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import GamesStore from "@/store/game/game.store";
-import GroupStore from "@/store/group/group.store";
+import StorageStore from "@/store/storage/storage.store";
 
 
 export class RootStore {
   gamesStore: GamesStore;
-  groupStore: GroupStore;
+  storageStore: StorageStore;
 
   constructor() {
     this.gamesStore = new GamesStore();
-    this.groupStore = new GroupStore();
+    this.storageStore = new StorageStore();
   }
 }
 

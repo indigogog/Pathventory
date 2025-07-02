@@ -3,41 +3,41 @@ import {useCallback, useEffect, useState} from "react";
 import {useNavigation} from "expo-router";
 import {useSQLiteContext} from "expo-sqlite";
 import {useStore} from "@/store";
-import useGroups from "@/backend/domain/groups/use-groups";
-import {Group} from "@/types/group.type";
+import {Storage} from "@/types/storage.type";
+import useStorages from "@/backend/domain/storages/use-storages";
 
-export const CreateEditGroup = () => {
+export const CreateEditStorage = () => {
   const db = useSQLiteContext();
-  const {gamesStore, groupStore} = useStore();
-  const {createGroup, updateGroup} = useGroups(db);
+  const {gamesStore, storageStore} = useStore();
+  const {createStorage, updateStorage} = useStorages(db);
 
   const navigation = useNavigation();
 
-  const [changed, setChanged] = useState<Group>({gameId: 0, title: "", groupId: 0})
+  const [changed, setChanged] = useState<Storage>({gameId: 0, title: "", storageId: 0})
 
   const onChangeTitle = useCallback((title: string) => {
     setChanged((prev) => ({...prev, title}));
   }, [setChanged])
 
   const onSave = async () => {
-    if (groupStore.selectedGroup) {
-      await updateGroup(changed);
+    if (storageStore.selectedStorage) {
+      await updateStorage(changed);
     } else {
-      await createGroup(changed);
+      await createStorage(changed);
     }
 
     navigation.goBack();
   }
 
   useEffect(() => {
-    if (groupStore.selectedGroup ) {
-      setChanged(groupStore.selectedGroup)
+    if (storageStore.selectedStorage ) {
+      setChanged(storageStore.selectedStorage)
     }
 
     if(gamesStore.selectedGame) {
       setChanged((prev)=>({...prev, gameId: gamesStore.selectedGame!.gameId}))
     }
-  }, [groupStore.selectedGroup, gamesStore.selectedGame])
+  }, [storageStore.selectedStorage, gamesStore.selectedGame])
 
   return (
     <View style={{flex: 1, padding: 20, justifyContent: "space-between"}}>
@@ -63,7 +63,7 @@ export const CreateEditGroup = () => {
   );
 }
 
-export default CreateEditGroup;
+export default CreateEditStorage;
 
 const styles = StyleSheet.create({
   input: {

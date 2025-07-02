@@ -1,42 +1,42 @@
 import React from 'react';
 import {observer} from "mobx-react-lite";
-import {FlatList, Pressable, ScrollView, StyleSheet, Text, View} from "react-native";
+import {Pressable, ScrollView, StyleSheet, Text, View} from "react-native";
 import {useStore} from "@/store";
 import {useSQLiteContext} from "expo-sqlite";
-import useGroups from "@/backend/domain/groups/use-groups";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import {router} from "expo-router";
+import useStorages from "@/backend/domain/storages/use-storages";
 
-const GroupsFilter = observer(() => {
+const StorageFilter = observer(() => {
   const db = useSQLiteContext();
-  const {groupStore, gamesStore} = useStore();
-  useGroups(db);
+  const {storageStore, gamesStore} = useStore();
+  useStorages(db);
 
-  const {selectedGroup} = groupStore
+  const {selectedStorage} = storageStore
 
   const listData = [{
     gameId: gamesStore.selectedGame?.gameId ?? 0,
     title: 'Все',
-    groupId: null
-  }, ...groupStore.groups, {gameId: 0, title: '', groupId: 0}]
+    storageId: null
+  }, ...storageStore.storages, {gameId: 0, title: '', storageId: 0}]
 
   return (
     <View style={styles.container}>
       <ScrollView horizontal>
         {listData.map((item) => (
-          <View key={item.groupId}>
-            {item.groupId === 0 ? (
+          <View key={item.storageId}>
+            {item.storageId === 0 ? (
                 <Pressable
                   onPress={() => {
-                    groupStore.setSelectedGroup(null)
+                    storageStore.setSelectedStorage(null)
                     router.push({
-                      pathname: "/groups/create-group",
+                      pathname: "/storages/create-storage",
                     })
                   }}
                 >
                   <View
                     style={
-                      {...styles.groupContainer, ...styles.addContainer}
+                      {...styles.storageContainer, ...styles.addContainer}
                     }>
                     <MaterialIcons style={styles.addIcon} name={"add"} color={"white"}/>
                   </View>
@@ -46,24 +46,24 @@ const GroupsFilter = observer(() => {
               (
                 <Pressable
                   onPress={() => {
-                    groupStore.setSelectedGroup(item.groupId ? item : null)
+                    storageStore.setSelectedStorage(item.storageId ? item : null)
                   }}
                   onLongPress={() => {
-                    if (item.groupId) {
-                      groupStore.setSelectedGroup(item)
+                    if (item.storageId) {
+                      storageStore.setSelectedStorage(item)
                       router.push({
-                        pathname: "/groups/update-group",
+                        pathname: "/storages/update-storage",
                       })
                     }
                   }}
                 >
                   <View
                     style={
-                      selectedGroup?.groupId === item.groupId || selectedGroup === item.groupId
-                        ? {...styles.groupContainer, ...styles.selectedGroup}
-                        : styles.groupContainer
+                      selectedStorage?.storageId === item.storageId || selectedStorage === item.storageId
+                        ? {...styles.storageContainer, ...styles.selectedStorage}
+                        : styles.storageContainer
                     }>
-                    <Text style={styles.groupTitle}>{item.title}</Text>
+                    <Text style={styles.storageTitle}>{item.title}</Text>
                   </View>
                 </Pressable>
               )}
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: 40
   },
-  groupContainer: {
+  storageContainer: {
     borderStyle: "solid",
     borderWidth: 1,
     borderColor: "white",
@@ -99,10 +99,10 @@ const styles = StyleSheet.create({
     fontSize: 28,
     padding: 0
   },
-  selectedGroup: {
+  selectedStorage: {
     borderColor: "#5c8bff",
   },
-  groupTitle: {
+  storageTitle: {
     fontSize: 20,
     color: "white",
   },
@@ -111,4 +111,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default GroupsFilter;
+export default StorageFilter;
