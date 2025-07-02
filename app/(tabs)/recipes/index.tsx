@@ -1,12 +1,12 @@
 import { useLocalSearchParams } from "expo-router";
 import { Text, View } from "react-native";
-import GroupsFilter from "@/components/ui/groups-filter/groups-filter";
+import StorageFilter from "@/components/ui/storages-filter/storage-filter";
 
 export default function GameRecipes() {
   const { id } = useLocalSearchParams();
   return (
     <View style={{ flex: 1, padding: 10 }}>
-      <GroupsFilter/>
+      <StorageFilter/>
       <Text style={{ color: "white" }}>Рецепты объекта ID: {id}</Text>
     </View>
   );

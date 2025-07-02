@@ -55,11 +55,11 @@ export default function RootLayout() {
             />
 
             <Stack.Screen
-              name="groups/create-group/index"
+              name="storages/create-storage/index"
               options={{headerShown: true, headerTitle: "Создать раздел"}}
             />
             <Stack.Screen
-              name="groups/update-group/index"
+              name="storages/update-storage/index"
               options={{headerShown: true, headerTitle: "Редактировать раздел"}}
             />
 
