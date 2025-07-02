@@ -1,57 +1,77 @@
 import React from 'react';
 import {observer} from "mobx-react-lite";
-import {FlatList, Pressable, StyleSheet, Text, View} from "react-native";
+import {FlatList, Pressable, ScrollView, StyleSheet, Text, View} from "react-native";
 import {useStore} from "@/store";
 import {useSQLiteContext} from "expo-sqlite";
 import useGroups from "@/backend/domain/groups/use-groups";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import {router} from "expo-router";
 
 const GroupsFilter = observer(() => {
   const db = useSQLiteContext();
-  const {groupStore} = useStore();
-  const {createGroup, updateGroup} = useGroups(db);
+  const {groupStore, gamesStore} = useStore();
+  useGroups(db);
 
   const {selectedGroup} = groupStore
+
+  const listData = [{
+    gameId: gamesStore.selectedGame?.gameId ?? 0,
+    title: 'Все',
+    groupId: null
+  }, ...groupStore.groups, {gameId: 0, title: '', groupId: 0}]
+
   return (
     <View style={styles.container}>
-      <FlatList
-        contentContainerStyle={styles.list}
-        data={[...groupStore.groups, {gameId: 0, title: '', groupId: 0}]}
-        renderItem={({item}) => (
-          <>
+      <ScrollView horizontal>
+        {listData.map((item) => (
+          <View key={item.groupId}>
             {item.groupId === 0 ? (
                 <Pressable
                   onPress={() => {
                     groupStore.setSelectedGroup(null)
-                    // router.push({
-                    //   pathname: "/games/create-game",
-                    // })
+                    router.push({
+                      pathname: "/groups/create-group",
+                    })
                   }}
                 >
-                  {/*<View style={{...styles.gameContainer, ...styles.addContainer}}>*/}
-                  {/*  <MaterialIcons name={"add"} color={"white"} style={styles.addIcon}/>*/}
-                  {/*</View>*/}
+                  <View
+                    style={
+                      {...styles.groupContainer, ...styles.addContainer}
+                    }>
+                    <MaterialIcons style={styles.addIcon} name={"add"} color={"white"}/>
+                  </View>
                 </Pressable>
               )
               :
               (
                 <Pressable
                   onPress={() => {
-                    groupStore.setSelectedGroup(item)
+                    groupStore.setSelectedGroup(item.groupId ? item : null)
+                  }}
+                  onLongPress={() => {
+                    if (item.groupId) {
+                      groupStore.setSelectedGroup(item)
+                      router.push({
+                        pathname: "/groups/update-group",
+                      })
+                    }
                   }}
                 >
                   <View
                     style={
-                    selectedGroup?.groupId === item.groupId
-                      ? {...styles.groupContainer, ...styles.selectedGroup}
-                      : styles.groupContainer
-                  }>
+                      selectedGroup?.groupId === item.groupId || selectedGroup === item.groupId
+                        ? {...styles.groupContainer, ...styles.selectedGroup}
+                        : styles.groupContainer
+                    }>
                     <Text style={styles.groupTitle}>{item.title}</Text>
                   </View>
                 </Pressable>
               )}
-          </>
-        )}
-      />
+          </View>
+        ))}
+
+
+      </ScrollView>
     </View>
   );
 });
@@ -69,6 +89,16 @@ const styles = StyleSheet.create({
     padding: 3,
     marginRight: 8
   },
+  addContainer: {
+    height: 35,
+    width: 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  addIcon: {
+    fontSize: 28,
+    padding: 0
+  },
   selectedGroup: {
     borderColor: "#5c8bff",
   },
@@ -77,8 +107,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   list: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: 'row'
   }
 })
 

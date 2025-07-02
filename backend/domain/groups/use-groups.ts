@@ -40,6 +40,7 @@ export default function useGroups(db: SQLiteDatabase) {
 
     fetchGroups();
   }, [])
+
   useEffect(() => {
     fetchGroups()
   }, [selectedGame])
